@@ -164,6 +164,41 @@ Keep all private credentials on the backend. Never expose JWT secrets, AWS crede
 
 GitHub: https://github.com/Abhijitkr82/Nexvia-Marketplace-Backend
 
+
+## Coupon API
+
+All coupon endpoints are available under `/api/coupons`.
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/api/coupons` | Admin | Create a coupon |
+| GET | `/api/coupons` | Admin | Get all coupons |
+| PATCH | `/api/coupons/:id` | Admin | Update a coupon |
+| DELETE | `/api/coupons/:id` | Admin | Deactivate a coupon |
+| GET | `/api/coupons/available` | Customer | Fetch currently available coupons |
+
+All coupon endpoints require authentication and role-based authorization.
+
+### Create Coupon Request
+
+Example request body:
+
+```json
+{
+  "code": "SAVE20",
+  "discountType": "percentage",
+  "discountValue": 20,
+  "maxDiscount": 250,
+  "minOrderAmount": 500,
+  "usageLimit": 100,
+  "expiresAt": "2027-01-01T00:00:00.000Z"
+}
+```
+
+Supported discount types: `percentage` and `fixed`.
+
+Coupon deletion deactivates the coupon instead of permanently deleting it.
+
 ---
 
 **Nexvia Marketplace Backend**

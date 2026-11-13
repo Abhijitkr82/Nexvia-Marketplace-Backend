@@ -65,6 +65,35 @@ router.post('/', auth, verifyRole('admin'), async (req, res) => {
   }
 });
 
+
+// Customer: Get currently available coupons
+router.get('/available', auth, verifyRole('customer'), async (req, res) => {
+  try {
+    const now = new Date();
+
+    const coupons = await Coupon.find({
+      isActive: true,
+      startsAt: { $lte: now },
+      expiresAt: { $gt: now },
+      $or: [
+        { usageLimit: null },
+        { $expr: { $lt: ['$usedCount', '$usageLimit'] } },
+      ],
+    })
+      .select(
+        'code discountType discountValue maxDiscount minOrderAmount expiresAt'
+      )
+      .sort({ expiresAt: 1 })
+      .lean();
+
+    res.json({ coupons });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to fetch available offers',
+    });
+  }
+});
+
 // Admin: Get all coupons
 router.get('/', auth, verifyRole('admin'), async (req, res) => {
   try {
